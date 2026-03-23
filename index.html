@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
 
   <!-- ===== title ===== -->
-  <title>VitaTouch | A Property-Aware VTL Foundation Model for Manufacturing Quality Inspection</title>
+  <title>VitaTouch: Property-Aware Vision–Tactile–Language Model for Robotic Quality Inspection in Manufacturing</title>
 
   <!-- ===== SEO/share card ===== -->
   <meta
@@ -37,7 +37,7 @@
   <header class="hero">
     <div class="container">
       <h1 class="title">
-        VitaTouch: A Property-Aware Vision–Tactile–Language Foundation Model for Manufacturing Quality Inspection
+        VitaTouch: Property-Aware Vision–Tactile–Language Model for Robotic Quality Inspection in Manufacturing
       </h1>
 
       <!-- author： a/b/c/d/e  -->
@@ -49,7 +49,7 @@
         Jiayuan Li<sup>b,e</sup>,
         Zihang Lv<sup>a</sup>,
         Gang Chen<sup>a</sup>,
-        Fang Deng<sup>c,d</sup>
+        Fang Deng<sup>c,d</sup><sup>**</sup>
       </p>
 
       <!-- a：affiliations a/b/c/d/e -->
@@ -85,17 +85,12 @@
       ========================================================== -->
       <section id="abstract" class="section">
         <h2>Abstract</h2>
-        <p>
-          Quality control in smart manufacturing requires multi-level object understanding, including material property recognition,
-          monitoring of process-relevant attributes, and defect inspection. VitaTouch is a property-aware vision–tactile–language foundation model
-          that integrates visual and tactile sensing with natural-language queries in a unified semantic space. The model distills modality-specific evidence
-          from the visual and tactile streams into compact multimodal prefix tokens, projected into the embedding space of a large language model and used to
-          condition its generation. Training proceeds in three stages: (i) dual Q-Former cross-modal alignment, (ii) foundation model training for multi-property
-          object attribute recognition, and (iii) few-shot finetuning for defect detection via LoRA.
+         <p>
+          Quality inspection in smart manufacturing requires recognizing material and surface properties beyond visible geometry, while vision-only methods often struggle under imaging nuisances. We propose VitaTouch, a property-aware vision–tactile–language (VTL) model that integrates visual and tactile sensing with language prompts in a unified semantic space. With modality-specific encoders and dual Q-Formers, VitaTouch distills vision and touch into compact prefix tokens for a frozen large language model, enabling property reasoning and natural-language attribute description. We also build VitaSet, a VTL dataset with 186 objects, 52k multimodal images, and 5.1k instruction–answer pairs. VitaTouch achieves state-of-the-art performance on the public TVL benchmark, reaches 88.89% hardness accuracy, 75.13% roughness accuracy, and 54.81% descriptor recall on VitaSet, and maintains strong few-shot defect recognition with LoRA adaptation.
         </p>
 
         <p class="muted-note">
-          Overview of the progressive three-stage pipeline (alignment → property foundation → LoRA few-shot defect).
+          Overview of the dual-branch VitaTouch architecture and the progressive three-stage training pipeline.
         </p>
 
         <figure class="figure add-top-padding">
@@ -125,12 +120,12 @@
       <section id="method" class="section">
         <h2>Method</h2>
 
-        <div class="card">
+       <div class="card">
           <h3>Three-stage training</h3>
           <ul>
-            <li><b>Stage 1</b>: Cross-modal alignment (InfoNCE + PTM) to align vision↔text and tactile↔text using language as anchor.</li>
-            <li><b>Stage 2</b>: Property-reasoning foundation: inject fused vision–tactile prefix tokens into a frozen LLM (Vicuna-7B) for property VQA.</li>
-            <li><b>Stage 3</b>: Few-shot defect adaptation: LoRA tuning on LLM attention projections, updating only LoRA parameters.</li>
+            <li><b>Stage 1</b>: Cross-modal alignment to establish a shared semantic interface across vision, touch, and language.</li>
+            <li><b>Stage 2</b>: Property-reasoning foundation learning with dual Q-Formers that distill vision–tactile prefix tokens and prepend them to a frozen Vicuna-7B decoder.</li>
+            <li><b>Stage 3</b>: Parameter-efficient few-shot defect recognition using LoRA while freezing the backbone.</li>
           </ul>
         </div>
 
@@ -152,12 +147,12 @@
         <div class="card">
           <h3>TVL Benchmark</h3>
           <p>
-            <b>Table 2:</b> Comparison on the TVL benchmark. VitaTouch achieves the best performance on HCT and TVL,
-            and remains competitive on SSVTP.
+            <b>Table 1:</b> Comparison on the TVL benchmark. VitaTouch achieves the best performance
+on HCT and TVL, and remains competitive on SSVTP.
           </p>
 
           <figure class="figure">
-            <img src="assets/table2.png" alt="Table 2: Comparison on the TVL benchmark" />
+            <img src="assets/table1.png" alt="Table 1: Comparison on the TVL benchmark" />
           </figure>
         </div>
 
@@ -167,8 +162,10 @@
         <div class="card add-top-padding">
           <h3>VitaSet Validation Performance</h3>
           <p>
-            <b>Figure 4:</b> VitaSet dataset: validation performance vs. epoch across tasks. Stars denote the best epoch
-            for each task/aggregate metric.
+            <b>Figure 4:</b> VitaSet validation performance of VitaTouch across training epochs.
+    (a) Multi-task validation trends for hardness accuracy, roughness accuracy, descriptor recall,
+    and mean task score. (b) Comparison of strict exact-match descriptor recall and semantic
+    similarity for the material descriptor task. Stars mark the best epoch for each metric.
           </p>
 
           <figure class="figure">
@@ -182,17 +179,18 @@
         <div class="card add-top-padding">
           <h3>Ablation on VitaSet</h3>
           <p>
-            <b>Table 3:</b> Ablation results on the VitaSet dataset comparing unimodal baselines with VitaTouch.
+            <b>Table 2:</b> Comparison of the full VitaTouch model, a no-Stage-1 variant, and unimodal
+settings on VitaSet across tasks.
           </p>
 
           <figure class="figure">
-            <img src="assets/table3.png" alt="Table 3: Ablation results on VitaSet" />
+            <img src="assets/table2.png" alt="Table 2: Ablation results on VitaSet" />
           </figure>
 
           <p class="add-top-padding">
-            <b>Figure 5:</b> Ablation results on the VitaSet dataset across tasks. Each variant removes one key stage/component
-            from the full model, demonstrating the necessity of explicit alignment and multimodal fusion for robust multi-task
-            property learning.
+            <b>Figure 5:</b> Ablation results on the VitaSet dataset across tasks. Each variant removes
+one key stage from the full model, demonstrating the necessity of explicit alignment and
+multimodal fusion for robust multi-task property learning.
           </p>
 
           <figure class="figure">
@@ -201,17 +199,18 @@
         </div>
 
         <!-- =========================
-          Group 4: Table 4 (Few-shot defect)
+          Group 4: Table 3 (Few-shot defect)
         ========================== -->
         <div class="card add-top-padding">
-          <h3>Few-shot Defect Detection (LoRA)</h3>
+          <h3>Few-shot Defect Adaptation</h3>
           <p>
-            <b>Table 4:</b> Stage 3 few-shot defect detection with LoRA by varying the number of training samples per object K
-            (6 objects; test set fixed).
+            <b>Table 3:</b> LoRA-based defect adaptation results under different numbers of defect categories
+and labeled training samples per category. Three settings are compared: vision-only,
+tactile-only, and the full VitaTouch model with fused vision–tactile inputs.
           </p>
 
           <figure class="figure">
-            <img src="assets/table4.png" alt="Table 4: Few-shot defect detection with LoRA" />
+            <img src="assets/table3.png" alt="Table 3: Few-shot defect adaptation with LoRA" />
           </figure>
         </div>
 
@@ -221,9 +220,7 @@
         <div class="card add-top-padding">
           <h3>Qualitative Outputs</h3>
           <p>
-            <b>Figure 6:</b> Qualitative inspection-style outputs of VitaTouch. We show representative predictions for material
-            attribute description (controlled vocabulary), roughness and hardness classification, and defect decision with brief
-            description.
+            <b>Figure 6:</b> Qualitative inspection-style outputs of VitaTouch. Representative examples are shown for material descriptor prediction, hardness classification, roughness classification, and defect decision with brief descriptions.
           </p>
 
           <figure class="figure">
@@ -237,9 +234,7 @@
         <div class="card add-top-padding">
           <h3>Robotic Sorting Demonstration</h3>
           <p>
-            <b>Figure 7:</b> Proof-of-concept robotic sorting demonstration. The robot performs pre-grasp, acquires tactile RGB
-            observations during grasp, predicts defect/normal using the Stage 3 model, and sorts the object into defect (left) or
-            normal (right) bin accordingly.
+            <b>Figure 7:</b> Proof-of-concept robotic sorting demonstration. The robot performs pre-grasp, acquires tactile RGB observations during grasp, predicts defect status using the Stage 3 model, and sorts the object into the defect (left) or normal (right) bin accordingly.
           </p>
 
           <figure class="figure">
@@ -254,9 +249,9 @@
       ========================================================== -->
       <section id="demo" class="section">
         <h2>Robotic Sorting Demo</h2>
-          <p>
+         <p>
           We provide videos of the proof-of-concept closed-loop sorting system. The robot acquires aligned vision and tactile observations during grasp,
-          predicts <b>defect vs. normal</b> using the Stage-3 model, and places objects into the <b>left</b> (defect) or <b>right</b> (normal) bin.
+          predicts <b>defect status</b> using the Stage-3 model, and places objects into the <b>left</b> (defect) or <b>right</b> (normal) bin.
         </p>
 
 
@@ -309,7 +304,7 @@
 
         <div class="codeblock">
           <pre id="bibtex"><code>@article{zong_vitatouch_2025,
-  title   = {VitaTouch: A Property-Aware Vision--Tactile--Language Foundation Model for Manufacturing Quality Inspection},
+  title   = {VitaTouch: Property-Aware Vision–Tactile–Language Model for Robotic Quality Inspection in Manufacturing},
   author  = {Zong, Junyi and Jia, Qingxuan and Shi, Meixian and Li, Tong and Li, Jiayuan and Lv, Zihang and Chen, Gang and Deng, Fang},
   year    = {2025}
 }</code></pre>
